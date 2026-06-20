@@ -55,18 +55,26 @@ The report lands at `run-reports/<runId>.md` (plus a `.json` raw record). Read i
 decide the next move, and run `/runspec` again with the new goal/direction. That manual
 read-and-redirect loop is the human-in-the-loop gate.
 
-## Install
+## Setup
+
+Setup has two halves: a deterministic file copy (`install.sh`) and a per-project fit done by an
+interactive agent following [`SETUP.md`](SETUP.md) — interview/scaffold for new repos, discover
+and adapt for existing ones. Both scenarios converge on the same runbook.
 
 ```bash
-# from your repo root
-cp -r /path/to/runspec-kit/.claude/skills/*  .claude/skills/   # spec-review, docs-maintainer
-cp    /path/to/runspec-kit/.claude/workflows/runspec.mjs  .claude/workflows/
-cp    /path/to/runspec-kit/SPEC_TEMPLATE.md  .
+# 1. mechanical: drop the bundle into the target repo (run from the repo, or pass its path)
+bash /path/to/runspec/install.sh .
+
+# 2. judgment: open Claude Code in that repo and say:
+#    "set up runspec by following SETUP.md"
 ```
 
-Add `.worktrees/` to your `.gitignore`. The workflow assumes a git repo with a clean main
-branch; if the project has a test suite it loops it to green before merging, otherwise it
-reports `no-tests`.
+`install.sh` is idempotent and conflict-aware (it won't clobber an existing `SPEC_TEMPLATE.md`
+or same-named skill — it reports them; `--force` overrides). `SETUP.md` never runs `/runspec`;
+it leaves you ready to launch the first run yourself.
+
+The workflow assumes a git repo with a clean main branch; if the project has a test suite it
+loops it to green before merging, otherwise it reports `no-tests`.
 
 ## Customize
 
