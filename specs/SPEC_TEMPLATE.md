@@ -3,8 +3,8 @@
 <!-- One spec per work item. Written by the planner, reviewed in batch by the spec reviewer
 (max two rounds), implemented by one builder in an isolated git worktree following the
 Implementation Tasks below in order, verified section-by-section by the implementation
-reviewer. The builder checks off each task box as it completes it. Completed specs move to
-specs/archive/. -->
+reviewer. The builder checks off each task box as it completes it. Generated specs are per-run
+working artifacts (gitignored); only this template is tracked. -->
 
 ## Overview
 - Summarize the purpose, background, and deliverables for this spec.
@@ -105,4 +105,4 @@ specs/archive/. -->
 ## Completion Criteria
 - Every box in `## Implementation Tasks` and `## Completion Tasks` is checked.
 - All acceptance criteria met, the spec's test cases pass, implementation review passed.
-- docs/ reflect the change. The completed spec moves to specs/archive/.
+- docs/ reflect the change.

@@ -9,7 +9,7 @@ plan ──▶ spec review ──▶ ║ build ─▶ skeptic review ─▶ docs
  (1)        (2, ≤2 rounds)  ╚═══ parallel lane per spec ═══╝     (merge to green)      (to disk)
 ```
 
-It is product-agnostic. Copy the `.claude/` bundle into any git repo and run `/runspec`.
+It is product-agnostic. Drop it into any git repo with `install.sh` and run `/runspec`.
 
 ## What it does
 
@@ -18,7 +18,7 @@ that orchestrates a fleet of subagents through five phases:
 
 1. **Plan** — a planner decomposes the goal into as many independent, non-overlapping specs as it
    naturally divides into (it decides the count, favoring parallel-friendly splits where two specs
-   never touch the same file), each following `.claude/SPEC_TEMPLATE.md` including its checkbox lifecycle,
+   never touch the same file), each following `specs/SPEC_TEMPLATE.md` including its checkbox lifecycle,
    written to `specs/`.
 2. **Spec review** — one reviewer critiques all specs as a batch (≤2 rounds), catching
    cross-spec file collisions *before* the fan-out. Governed by the `spec-review` skill.
@@ -68,8 +68,9 @@ bash /path/to/runspec/install.sh .
 #    "set up runspec by following SETUP.md"
 ```
 
-`install.sh` is idempotent and conflict-aware (it won't clobber an existing `.claude/SPEC_TEMPLATE.md`
-or same-named skill — it reports them; `--force` overrides). `SETUP.md` never runs `/runspec`;
+`install.sh` is idempotent and conflict-aware (it won't clobber an existing `specs/SPEC_TEMPLATE.md`
+or same-named skill — it reports them; `--force` overrides). It also gitignores generated specs
+(only the template is tracked) and run reports. `SETUP.md` never runs `/runspec`;
 it leaves you ready to launch the first run yourself.
 
 The workflow assumes a git repo with a clean main branch; if the project has a test suite it

@@ -31,7 +31,7 @@ FILES=(
   ".claude/skills/spec-review/SKILL.md"
   ".claude/skills/docs-maintainer/SKILL.md"
   ".claude/skills/test-driver/SKILL.md"
-  ".claude/SPEC_TEMPLATE.md"
+  "specs/SPEC_TEMPLATE.md"
 )
 
 installed=()
@@ -47,14 +47,11 @@ for f in "${FILES[@]}"; do
   installed+=("$f")
 done
 
-# specs/ scaffold (the planner writes specs here; archive/ holds completed ones).
-mkdir -p "$TARGET/specs/archive"
-[ -e "$TARGET/specs/archive/.gitkeep" ] || : > "$TARGET/specs/archive/.gitkeep"
-
-# .gitignore entries — append only if missing (idempotent).
+# .gitignore entries — append only if missing (idempotent). Generated specs are ignored;
+# the template (copied above) is re-included by the negation that follows specs/*.
 gi="$TARGET/.gitignore"
 if [ -f "$gi" ] && [ -n "$(tail -c1 "$gi")" ]; then printf '\n' >> "$gi"; fi
-for entry in ".worktrees/" "run-reports/"; do
+for entry in ".worktrees/" "specs/*" "!specs/SPEC_TEMPLATE.md" "run-reports/"; do
   if ! { [ -f "$gi" ] && grep -qxF "$entry" "$gi"; }; then
     printf '%s\n' "$entry" >> "$gi"
   fi

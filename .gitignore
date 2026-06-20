@@ -1,6 +1,10 @@
 # Worktrees created by the runspec workflow's build lanes
 .worktrees/
 
+# Generated specs are per-run working artifacts; only the template is tracked
+specs/*
+!specs/SPEC_TEMPLATE.md
+
 # Run reports are generated artifacts; keep or commit per your preference
 run-reports/
 

@@ -58,8 +58,8 @@ user only to confirm or correct.
 1. **Check preconditions.** Confirm it's a git repo, the working tree is clean, and you're on a
    branch (not detached HEAD). Stop and report if any of these fail.
 2. **Install the bundle.** Run `bash <path-to-runspec>/install.sh .` and read its report. If it
-   **skipped** `.claude/SPEC_TEMPLATE.md` or a same-named skill, surface that to the user: the
-   planner reads `.claude/SPEC_TEMPLATE.md`, so the repo must use runspec's or a compatible one. Only re-run with
+   **skipped** `specs/SPEC_TEMPLATE.md` or a same-named skill, surface that to the user: the
+   planner reads `specs/SPEC_TEMPLATE.md`, so the repo must use runspec's or a compatible one. Only re-run with
    `--force` to overwrite once the user agrees.
 3. **Establish a green baseline.** Discover the project's test command, **actually run it**, and
    confirm it passes. If the baseline is red, **stop and report** — runspec's Integrate phase
@@ -73,8 +73,8 @@ user only to confirm or correct.
    the user decide interactively whether to adopt them. For a mature codebase the safe default is
    additive — don't force them on. If the user opts in, merge them into the docs **without**
    overwriting the repo's existing conventions.
-6. **Confirm structure.** `install.sh` created `specs/` and `specs/archive/`; verify they're
-   present. Do **not** reorganize the repo's existing files.
+6. **Confirm structure.** `install.sh` created `specs/` (with the tracked template; generated
+   specs are gitignored). Do **not** reorganize the repo's existing files.
 7. **Commit** the setup as one clear commit (e.g. "Add runspec workflow").
 8. **Stop and report.** Confirm the bundle is in place and the baseline is green, then tell the
    user how to launch — suggest a small, low-risk first goal to validate the loop end-to-end. Do
@@ -95,4 +95,4 @@ adopted, merge them in without overwriting the repo's existing conventions.
 - **No silent fallbacks or ad hoc alternative paths** unless explicitly requested.
 - **Fail fast.** If safe continuation isn't possible, raise a clear error. Don't pass default
   fallback values to env/config lookups — require the variable and fail clearly if it's missing.
-- **Specs are the contract.** Plan with `.claude/SPEC_TEMPLATE.md`; build test-first (TDD).
+- **Specs are the contract.** Plan with `specs/SPEC_TEMPLATE.md`; build test-first (TDD).
