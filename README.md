@@ -17,8 +17,10 @@ and run `/runspec`.
 `/runspec` is a [dynamic workflow](https://docs.claude.com/en/docs/claude-code) (`.claude/workflows/runspec.mjs`)
 that orchestrates a fleet of subagents through five phases:
 
-1. **Plan** — a planner decomposes the goal into 3–6 narrow, non-overlapping specs (one file
-   each, following `SPEC_TEMPLATE.md`, including its checkbox lifecycle) and writes them to `specs/`.
+1. **Plan** — a planner decomposes the goal into as many independent, non-overlapping specs as it
+   naturally divides into (it decides the count, favoring parallel-friendly splits where two specs
+   never touch the same file), each following `SPEC_TEMPLATE.md` including its checkbox lifecycle,
+   written to `specs/`.
 2. **Spec review** — one reviewer critiques all specs as a batch (≤2 rounds), catching
    cross-spec file collisions *before* the fan-out. Governed by the `spec-review` skill.
 3. **Work lanes** — one lane per spec, running **in parallel, each in its own git worktree**
@@ -72,7 +74,9 @@ branch; if there's an `npm test`/`npm run build` it loops them to green, otherwi
   seam — everything above it is delivery-agnostic and hands off a clean `runRecord` object.
   Swap that phase to POST the report to an HTTP endpoint, open a PR comment, or message Slack
   instead of (or in addition to) writing to disk.
-- **Build/test commands.** Edit the Integrate phase prompt if your project isn't `npm`-based.
+- **Build/test commands.** The Integrate phase discovers your project's real test/build commands
+  (package.json, Makefile, pyproject, Cargo, go, CI config, or a spec's Verification section) — no
+  npm assumption. Naming them in `CLAUDE.md`/`AGENTS.md` makes discovery reliable.
 - **Caps.** `MAX_SPEC_REVIEW_ROUNDS` and `MAX_BUILD_ATTEMPTS` at the top of `runspec.mjs`.
 - **Model routing.** Planner/reviewers/docs run on `sonnet`; builders, integrator, and reporter
   inherit the session model. Adjust the `model:` options per `agent()` call.

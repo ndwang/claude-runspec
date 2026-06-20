@@ -3,7 +3,7 @@ export const meta = {
   description:
     'One run: plan -> spec review -> parallel work lanes (build/review/docs in isolated git worktrees) -> integrate & test -> write a structured run report. A self-contained, product-agnostic agentic build loop.',
   phases: [
-    { title: 'Plan', detail: 'decompose the goal into 3-6 specs' },
+    { title: 'Plan', detail: 'decompose the goal into independent, parallel specs' },
     { title: 'Spec review', detail: 'batch critique; catch cross-spec conflicts' },
     { title: 'Work lanes', detail: 'per item: build -> skeptic review -> docs, in an isolated worktree' },
     { title: 'Integrate', detail: 'merge lanes, resolve conflicts, loop tests to green' },
@@ -12,7 +12,7 @@ export const meta = {
 }
 
 // ---------------------------------------------------------------------------
-// Inputs. Launched as `/run with goal '...' and direction '...'`.
+// Inputs. Launched as `/runspec with goal '...' and direction '...'`.
 // Read defensively: args may be an object, a JSON string, or a bare goal string.
 // ---------------------------------------------------------------------------
 let input = args
@@ -50,7 +50,6 @@ const SPECS_SCHEMA = {
     items: {
       type: 'array',
       minItems: 1,
-      maxItems: 6,
       items: {
         type: 'object',
         additionalProperties: false,
@@ -180,12 +179,14 @@ phase('Plan')
 let specs = await agent(
   `${CONTEXT}
 
-You are the PLANNER. Decompose the run goal into 3-6 concrete, non-overlapping work items.
+You are the PLANNER. Decompose the run goal into concrete, non-overlapping work items. YOU decide
+how many — split into as many genuinely independent items as the goal naturally divides into so
+they can be built in parallel, but don't invent busywork or split work that's truly one unit. Each
+item becomes its own parallel build lane, so favor parallelism: two items must NOT edit the same file.
 For EACH item, write a spec file under specs/ following SPEC_TEMPLATE.md exactly (purpose,
 acceptance criteria, target files, modules, data models, test cases) — keep its
-"## Implementation Tasks" and "## Completion Tasks" checklists verbatim; the builder works
-them. Keep items narrow and genuinely parallel — two items must not edit the same file. Specs are the contract everything
-downstream verifies against, so make acceptance criteria precise and testable.
+"## Implementation Tasks" and "## Completion Tasks" checklists verbatim; the builder works them.
+Specs are the contract everything downstream verifies against, so make acceptance criteria precise and testable.
 
 Write the spec files to disk now, then return the structured list. Do not implement anything.`,
   { schema: SPECS_SCHEMA, model: 'sonnet', label: 'planner' }
@@ -336,8 +337,11 @@ You are INTEGRATION. From the repo root on the main branch, merge ONLY these bra
 passed review: ${JSON.stringify(done.map((l) => l.branch))}.
 - Record the pre-merge HEAD, then merge each branch; resolve any conflicts (code AND docs).
 - Run a docs consistency pass so merged docs/ don't contradict each other.
-- Loop on the project's checks — \`npm run build\` and \`npm test\` if a test script exists —
-  fixing failures until green, capped at 3 attempts. If there is no test script, report 'no-tests'.
+- Loop on THE PROJECT'S OWN checks until green, capped at 3 attempts. Discover what those are —
+  do not assume npm. Look at CLAUDE.md/AGENTS.md, package.json scripts, Makefile/justfile,
+  pyproject.toml/tox.ini/noxfile, Cargo.toml, go.mod, CI config (.github/workflows), or a
+  Verification section in the specs — and run the project's real test (and build/lint) commands,
+  fixing failures. If the project genuinely has no test suite, report 'no-tests'.
 - Clean up the merged worktrees: \`git worktree remove <path>\` for each.
 - Return commitRange as <pre-merge-HEAD>..HEAD so the reporter can diff the run.
 
