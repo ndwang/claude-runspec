@@ -168,6 +168,7 @@ const REPORT_RESULT_SCHEMA = {
     reportPath: { type: 'string', description: 'path to the saved Markdown report' },
     jsonPath: { type: 'string', description: 'path to the saved raw run record' },
     openQuestions: { type: 'number', description: 'escalated + unresolved items needing a human decision' },
+    specsRemoved: { type: 'array', items: { type: 'string' }, description: 'completed spec files deleted after the report was written' },
     summary: { type: 'string' },
   },
 }
@@ -364,6 +365,9 @@ const runRecord = {
   lanes,
   integrate,
 }
+const doneSpecPaths = done
+  .map((l) => (specs.items.find((i) => i.id === l.id) || {}).specPath)
+  .filter(Boolean)
 
 const report = await agent(
   `${CONTEXT}
@@ -374,8 +378,9 @@ including failed attempts, and integration/test results):
 
 ${JSON.stringify(runRecord, null, 2)}
 
-Also read the real git history yourself: \`git log --oneline\` and the diff for
-${integrate.commitRange || 'the recent commits'}.
+The full spec files are still on disk under specs/ — read whichever you need for the
+spec-vs-implementation delta. Also read the real git history yourself: \`git log --oneline\`
+and the diff for ${integrate.commitRange || 'the recent commits'}.
 
 Write a structured Markdown report to ./run-reports/${runId ? runId : '<slug>'}.md
 (\`mkdir -p run-reports\` first${runId ? '' : '; derive <slug> as a short kebab-case slug from the goal'}),
@@ -388,11 +393,16 @@ with these sections:
 - **Proposed next steps** — concrete options for the next run's goal/direction.
 Also write the raw run record to ./run-reports/${runId ? runId : '<slug>'}.json for tooling.
 
+FINALLY, once the report is written, clean up the completed specs — their lanes merged and
+shipped, so the specs are spent: \`rm -f\` each of ${JSON.stringify(doneSpecPaths)} and return
+them in specsRemoved. Do this LAST, after you've used the specs for the report. Leave the specs
+for escalated/unresolved items in specs/ — they're the run's open work for the human.
+
 Return the structured result, with openQuestions = escalated + unresolved count.`,
   { schema: REPORT_RESULT_SCHEMA, label: 'reporter' }
 )
 
-log(`Reporter: written=${report.written} path=${report.reportPath} openQuestions=${report.openQuestions}`)
+log(`Reporter: written=${report.written} path=${report.reportPath} openQuestions=${report.openQuestions} specsRemoved=${report.specsRemoved?.length ?? 0}`)
 
 return {
   goal,

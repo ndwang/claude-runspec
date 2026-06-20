@@ -106,3 +106,4 @@ working artifacts (gitignored); only this template is tracked. -->
 - Every box in `## Implementation Tasks` and `## Completion Tasks` is checked.
 - All acceptance criteria met, the spec's test cases pass, implementation review passed.
 - docs/ reflect the change.
+- After the run reports, this completed spec is deleted — it's a spent per-run artifact.

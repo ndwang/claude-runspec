@@ -29,18 +29,20 @@ that orchestrates a fleet of subagents through five phases:
 1. **Plan** — a planner decomposes the goal into as many independent, non-overlapping specs as it
    naturally divides into (Claude decides the count, favoring parallel-friendly splits),
    each following `specs/SPEC_TEMPLATE.md`, written to `specs/`.
-3. **Spec review** — one reviewer critiques all specs as a batch (≤2 rounds), catching
+2. **Spec review** — one reviewer critiques all specs as a batch (≤2 rounds), catching
    cross-spec file collisions *before* the fan-out. Governed by the `spec-review` skill.
-4. **Work lanes** — one lane per spec, running **in parallel, each in its own git worktree**
+3. **Work lanes** — one lane per spec, running **in parallel, each in its own git worktree**
    so they can't collide. Each lane: a builder works the spec's `## Implementation Tasks` **in
    order — TDD, tests first** (`test-driver` skill), checking off each box → a fresh skeptic
    reviewer diffs it against the spec section-by-section, confirms the tests are real, and runs
    them → on pass, the `docs-maintainer` skill updates `docs/`. Rejections retry with objections
    attached (cap 2).
-5. **Integrate** — merge only the lanes that passed, resolve conflicts, loop the project's
+4. **Integrate** — merge only the lanes that passed, resolve conflicts, loop the project's
    build/test to green, and clean up the worktrees.
-6. **Report** — a reporter compiles a structured Markdown run report (what shipped, what
-   docs changed, open questions needing a decision, proposed next steps) to `run-reports/`.
+5. **Report** — a reporter compiles a structured Markdown run report (what shipped, what docs
+   changed, open questions needing a decision, proposed next steps) to `run-reports/`, then as a
+   final step deletes the completed specs — escalated/unresolved specs stay in `specs/`, so a run
+   ends holding only open work.
 
 Escalations are never silently resolved. They surface as **open questions** in the
 report for a human to decide.
