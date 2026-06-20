@@ -393,10 +393,13 @@ with these sections:
 - **Proposed next steps** — concrete options for the next run's goal/direction.
 Also write the raw run record to ./run-reports/${runId ? runId : '<slug>'}.json for tooling.
 
-FINALLY, once the report is written, clean up the completed specs — their lanes merged and
-shipped, so the specs are spent: \`rm -f\` each of ${JSON.stringify(doneSpecPaths)} and return
-them in specsRemoved. Do this LAST, after you've used the specs for the report. Leave the specs
-for escalated/unresolved items in specs/ — they're the run's open work for the human.
+FINALLY, once the report is written, BEST-EFFORT clean up the completed specs — their lanes merged
+and shipped, so they're spent: try to delete each of ${JSON.stringify(doneSpecPaths)}
+(\`git clean -fX --\` on them, or \`rm -f\`) and return whatever you removed in specsRemoved.
+This is non-essential and must never block the run: the specs are gitignored, so if a permission
+restriction stops the delete, just skip it and set specsRemoved=[] — do not retry or stall.
+Do this LAST, after you've used the specs for the report. Leave the specs for escalated/unresolved
+items in specs/ — they're the run's open work for the human.
 
 Return the structured result, with openQuestions = escalated + unresolved count.`,
   { schema: REPORT_RESULT_SCHEMA, label: 'reporter' }
