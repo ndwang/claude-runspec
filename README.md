@@ -19,7 +19,7 @@ flowchart LR
     INT --> REP([Report<br/>to disk])
 ```
 
-It is product-agnostic. Drop it into any git repo with `install.sh` and run `/runspec`.
+Install it into any git repo with `install.sh` and run `/runspec`.
 
 ## What it does
 
@@ -27,34 +27,31 @@ It is product-agnostic. Drop it into any git repo with `install.sh` and run `/ru
 that orchestrates a fleet of subagents through five phases:
 
 1. **Plan** — a planner decomposes the goal into as many independent, non-overlapping specs as it
-   naturally divides into (it decides the count, favoring parallel-friendly splits where two specs
-   never touch the same file), each following `specs/SPEC_TEMPLATE.md` including its checkbox lifecycle,
-   written to `specs/`.
-2. **Spec review** — one reviewer critiques all specs as a batch (≤2 rounds), catching
+   naturally divides into (Claude decides the count, favoring parallel-friendly splits),
+   each following `specs/SPEC_TEMPLATE.md`, written to `specs/`.
+3. **Spec review** — one reviewer critiques all specs as a batch (≤2 rounds), catching
    cross-spec file collisions *before* the fan-out. Governed by the `spec-review` skill.
-3. **Work lanes** — one lane per spec, running **in parallel, each in its own git worktree**
+4. **Work lanes** — one lane per spec, running **in parallel, each in its own git worktree**
    so they can't collide. Each lane: a builder works the spec's `## Implementation Tasks` **in
    order — TDD, tests first** (`test-driver` skill), checking off each box → a fresh skeptic
    reviewer diffs it against the spec section-by-section, confirms the tests are real, and runs
    them → on pass, the `docs-maintainer` skill updates `docs/`. Rejections retry with objections
    attached (cap 2).
-4. **Integrate** — merge only the lanes that passed, resolve conflicts, loop the project's
+5. **Integrate** — merge only the lanes that passed, resolve conflicts, loop the project's
    build/test to green, and clean up the worktrees.
-5. **Report** — a reporter compiles a structured Markdown run report (what shipped, what
+6. **Report** — a reporter compiles a structured Markdown run report (what shipped, what
    docs changed, open questions needing a decision, proposed next steps) to `run-reports/`.
 
-Every agent returns **schema-validated structured data**, never prose, so the orchestration is
-deterministic. Escalations (a spec that would weaken an existing contract, or an item that
-can't pass review) are never silently resolved — they surface as **open questions** in the
+Escalations are never silently resolved. They surface as **open questions** in the
 report for a human to decide.
 
 ## Use it
 
-**The primary mode is automatic.** Claude discovers the workflow in `.claude/workflows/` and runs
-it on its own — hand it a substantial, parallelizable build task in plain language and it reaches
-for runspec, plans, fans out the lanes, integrates, and reports, without you invoking anything. It
-stays hands-on for the small stuff (a quick edit, a one-file fix); runspec is for the work big
-enough to decompose.
+Claude discovers the workflow in `.claude/workflows/` and runs it on its own. 
+Hand it a substantial, parallelizable build task in plain language and it reaches
+for runspec, plans, fans out the lanes, integrates, and reports, without you invoking anything.
+It stays hands-on for the small stuff (a quick edit, a one-file fix). 
+You can modify the behavior by explicitly documenting your preferences.
 
 Manual `/runspec` is the explicit form — for forcing a run or passing exact inputs:
 
@@ -72,9 +69,9 @@ read-and-redirect loop is the human-in-the-loop gate.
 
 ## Setup
 
-Setup has two halves: a deterministic file copy (`install.sh`) and a per-project fit done by an
+Setup has two options: a deterministic file copy (`install.sh`) and a per-project fit done by an
 interactive agent following [`SETUP.md`](SETUP.md) — interview/scaffold for new repos, discover
-and adapt for existing ones. Both scenarios converge on the same runbook.
+and adapt for existing ones.
 
 ```bash
 # 1. mechanical: drop the bundle into the target repo (run from the repo, or pass its path)
@@ -96,13 +93,6 @@ tracked `specs/SPEC_TEMPLATE.md`. `install.sh` also adds these `.gitignore` entr
   only the template is tracked.** Note: if your repo already keeps hand-written files under `specs/`,
   newly added ones will be ignored from here on (already-tracked files are unaffected) — move them
   or adjust the rule if you want them versioned.
-- `run-reports/` — generated run reports; keep or commit per your preference.
-
-runspec's durable output is the merged code + tests + docs on your main branch; specs and run
-reports are working artifacts.
-
-The workflow assumes a git repo with a clean main branch; if the project has a test suite it
-loops it to green before merging, otherwise it reports `no-tests`.
 
 ## Customize
 
