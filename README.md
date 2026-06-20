@@ -87,8 +87,9 @@ bash /path/to/claude-runspec/install.sh .
 or same-named skill — it reports them; `--force` overrides). `SETUP.md` never runs `/runspec`;
 it leaves you ready to launch the first run yourself.
 
-**What gets written to your repo.** The bundle lives under `.claude/` (workflow + skills) plus the
-tracked `specs/SPEC_TEMPLATE.md`. `install.sh` also adds these `.gitignore` entries:
+**What gets written to your repo.** The bundle lives under `.claude/` (workflow, skills, and a
+`settings.json` that pre-approves the workflow's git commands) plus the tracked
+`specs/SPEC_TEMPLATE.md`. `install.sh` also adds these `.gitignore` entries:
 
 - `.worktrees/` — the isolated build-lane checkouts.
 - `specs/*` (with `!specs/SPEC_TEMPLATE.md`) — **generated specs are ephemeral per-run artifacts;
@@ -103,6 +104,10 @@ tracked `specs/SPEC_TEMPLATE.md`. `install.sh` also adds these `.gitignore` entr
   Swap that phase to open a PR comment, or message Slack instead of (or in addition to) writing to disk.
 - **Tests.** The Integrate phase requires the project's tests to pass before merging. The test
   command is inferred from the project; documenting it in `CLAUDE.md`/`AGENTS.md` makes that reliable.
+- **Permissions.** Workflow subagents always run in `acceptEdits` mode, which auto-approves file
+  edits and `rm`/`mkdir`/etc. but prompts on `git merge`, `git worktree`, and the test command.
+  The shipped `.claude/settings.json` pre-approves the workflow's git commands; setup adds your
+  test command. Trim entries (or delete the file) to tighten — at the cost of a prompt per command.
 - **Caps.** `MAX_SPEC_REVIEW_ROUNDS` and `MAX_BUILD_ATTEMPTS` at the top of `runspec.mjs`.
 - **Model routing.** Planner/reviewers/docs run on `sonnet`; builders, integrator, and reporter
   inherit the session model. Adjust the `model:` options per `agent()` call.

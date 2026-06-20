@@ -31,6 +31,7 @@ FILES=(
   ".claude/skills/spec-review/SKILL.md"
   ".claude/skills/docs-maintainer/SKILL.md"
   ".claude/skills/test-driver/SKILL.md"
+  ".claude/settings.json"
   "specs/SPEC_TEMPLATE.md"
 )
 

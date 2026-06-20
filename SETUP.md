@@ -35,7 +35,10 @@ Greenfield. **Run `install.sh` first**, then interview and scaffold. Do the step
    the directory layout from the interview.
 4. **Stand up the test runner.** Install/configure the chosen framework and add **one trivial
    passing test**, then run it to confirm green. This makes "the tests pass" meaningful from the
-   very first run — runspec's Integrate phase gates on it.
+   very first run — runspec's Integrate phase gates on it. Then add the project's test (and any
+   build/lint) command to `.claude/settings.json` (installed in step 1) under `permissions.allow`
+   — e.g. `"Bash(npm test:*)"` — so Integrate runs it without a permission prompt. The git
+   commands the workflow uses are already pre-approved there.
 5. **Write the docs.**
    - `AGENTS.md` is the canonical agent doc: product vision/scope, stack, conventions, the
      **test command**, and **[the master rules](#the-opinionated-master-rules)** — new projects
@@ -65,18 +68,24 @@ user only to confirm or correct.
    confirm it passes. If the baseline is red, **stop and report** — runspec's Integrate phase
    assumes green, and a pre-existing failure would corrupt every run's signal. (Don't add specs
    or workflow pointers to the docs — Claude Code discovers the workflow and skills on its own.)
-4. **Make sure `CLAUDE.md` exists.** If it already does, leave it. If not and an `AGENTS.md`
+4. **Pre-approve the workflow's commands.** Subagents run in `acceptEdits` mode, which prompts on
+   `git merge`/`git worktree`/the test command unless they're allowlisted. install.sh ships
+   `.claude/settings.json` pre-approving the workflow's git commands — but if the repo already had
+   a `.claude/settings.json`, install.sh skipped it, so **merge** runspec's `permissions.allow`
+   entries into the existing one (never overwrite it). Either way, add the project's test (and any
+   build/lint) command, e.g. `"Bash(pytest:*)"`.
+5. **Make sure `CLAUDE.md` exists.** If it already does, leave it. If not and an `AGENTS.md`
    exists, symlink `CLAUDE.md → AGENTS.md` (`ln -s AGENTS.md CLAUDE.md`). If neither exists,
    draft a short `AGENTS.md` from the codebase (stack, conventions, test command) for the user to
    confirm, then symlink `CLAUDE.md` to it. Never overwrite an existing `CLAUDE.md`.
-5. **Master rules.** Present [the opinionated master rules](#the-opinionated-master-rules) and let
+6. **Master rules.** Present [the opinionated master rules](#the-opinionated-master-rules) and let
    the user decide interactively whether to adopt them. For a mature codebase the safe default is
    additive — don't force them on. If the user opts in, merge them into the docs **without**
    overwriting the repo's existing conventions.
-6. **Confirm structure.** `install.sh` created `specs/` (with the tracked template; generated
+7. **Confirm structure.** `install.sh` created `specs/` (with the tracked template; generated
    specs are gitignored). Do **not** reorganize the repo's existing files.
-7. **Commit** the setup as one clear commit (e.g. "Add runspec workflow").
-8. **Stop and report.** Confirm the bundle is in place and the baseline is green, then tell the
+8. **Commit** the setup as one clear commit (e.g. "Add runspec workflow").
+9. **Stop and report.** Confirm the bundle is in place and the baseline is green, then tell the
    user how to launch — suggest a small, low-risk first goal to validate the loop end-to-end. Do
    not run `/runspec`.
 
