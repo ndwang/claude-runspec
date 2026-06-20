@@ -69,9 +69,21 @@ bash /path/to/runspec/install.sh .
 ```
 
 `install.sh` is idempotent and conflict-aware (it won't clobber an existing `specs/SPEC_TEMPLATE.md`
-or same-named skill — it reports them; `--force` overrides). It also gitignores generated specs
-(only the template is tracked) and run reports. `SETUP.md` never runs `/runspec`;
+or same-named skill — it reports them; `--force` overrides). `SETUP.md` never runs `/runspec`;
 it leaves you ready to launch the first run yourself.
+
+**What gets written to your repo.** The bundle lives under `.claude/` (workflow + skills) plus the
+tracked `specs/SPEC_TEMPLATE.md`. `install.sh` also adds these `.gitignore` entries:
+
+- `.worktrees/` — the isolated build-lane checkouts.
+- `specs/*` (with `!specs/SPEC_TEMPLATE.md`) — **generated specs are ephemeral per-run artifacts;
+  only the template is tracked.** Note: if your repo already keeps hand-written files under `specs/`,
+  newly added ones will be ignored from here on (already-tracked files are unaffected) — move them
+  or adjust the rule if you want them versioned.
+- `run-reports/` — generated run reports; keep or commit per your preference.
+
+runspec's durable output is the merged code + tests + docs on your main branch; specs and run
+reports are working artifacts.
 
 The workflow assumes a git repo with a clean main branch; if the project has a test suite it
 loops it to green before merging, otherwise it reports `no-tests`.
