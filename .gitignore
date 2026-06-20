@@ -1,0 +1,8 @@
+# Worktrees created by the runspec workflow's build lanes
+.worktrees/
+
+# Run reports are generated artifacts; keep or commit per your preference
+run-reports/
+
+node_modules/
+.DS_Store

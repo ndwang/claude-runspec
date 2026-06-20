@@ -1,0 +1,35 @@
+---
+name: docs-maintainer
+description: Conventions for updating docs/ to reflect only the confirmed current state of the code after an implementation passes review — rewrite stale sections, no history or changelog notes. Use when maintaining documentation inside a work-item lane of the runspec workflow.
+---
+
+# Docs Maintainer (workflow edition)
+
+## When it runs
+- Once per work item, inside that item's worktree, immediately after the
+  implementation review passes. Never in parallel against a shared checkout —
+  each lane edits its own worktree's copy of docs/; the integration phase merges
+  docs together with code and runs a consistency pass.
+
+## Principles
+- Files under docs/ describe only the confirmed current state of the codebase.
+- Do not append history-style notes or changelogs. History lives in git and in
+  the run report. The report records decisions and direction; docs record state.
+- Rewrite stale sections rather than layering caveats on top of them.
+
+## Workflow
+1. Read the item's spec and the diff of what was actually implemented.
+2. Read the current docs and remove or rewrite anything the change made stale.
+3. Reflect the new confirmed behavior, design, and terminology.
+4. Update related examples or diagrams when needed.
+
+## Checklist
+- Requirements and design docs do not contradict each other.
+- Terminology matches the spec and the project conventions.
+- Stale sections removed, not annotated.
+- Paths and filenames accurate.
+
+## Visibility
+- Docs changes are surfaced to the human in the run report: the reporter
+  includes a docs-changed section summarizing what was rewritten. If the human's
+  redirect invalidates work, reverting docs rides along with reverting code.
