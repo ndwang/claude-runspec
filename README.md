@@ -65,8 +65,8 @@ cp    /path/to/runspec-kit/SPEC_TEMPLATE.md  .
 ```
 
 Add `.worktrees/` to your `.gitignore`. The workflow assumes a git repo with a clean main
-branch; if there's an `npm test`/`npm run build` it loops them to green, otherwise it reports
-`no-tests`.
+branch; if the project has a test suite it loops it to green before merging, otherwise it
+reports `no-tests`.
 
 ## Customize
 
