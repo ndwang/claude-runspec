@@ -5,9 +5,18 @@ and it runs a full loop across parallel subagents — planning, building, review
 then writes a structured report a human reads to decide what happens next. Claude reaches for it
 on its own; `/runspec` is the explicit trigger.
 
-```
-plan ──▶ spec review ──▶ ║ build ─▶ skeptic review ─▶ docs ║ ──▶ integrate & test ──▶ report
- (1)        (2, ≤2 rounds)  ╚═══ parallel lane per spec ═══╝     (merge to green)      (to disk)
+```mermaid
+flowchart LR
+    P([Plan<br/>decompose into specs]) --> SR{{Spec review<br/>batch · ≤2 rounds}}
+    SR --> lane
+    subgraph lane [Parallel lane per spec · isolated git worktree]
+        direction LR
+        B[Build<br/>TDD · tests first] --> RV{Skeptic<br/>review}
+        RV -- reject · retry ×2 --> B
+        RV -- pass --> DC[Docs]
+    end
+    lane --> INT[Integrate &amp; test<br/>merge passing lanes to green]
+    INT --> REP([Report<br/>to disk])
 ```
 
 It is product-agnostic. Drop it into any git repo with `install.sh` and run `/runspec`.
