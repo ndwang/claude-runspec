@@ -18,34 +18,33 @@ Pick the path:
 
 ## New project
 
-Greenfield. Interview first, then scaffold. Do the steps in order.
+Greenfield. **Run `install.sh` first**, then interview and scaffold. Do the steps in order.
 
-1. **Interview the user.** Ask, conversationally, and confirm a summary before building:
+1. **Install the runspec bundle first, before anything else.** Run `install.sh` with the target
+   as its argument: `bash <path-to-runspec>/install.sh .` — `<path-to-runspec>` is the directory
+   holding SETUP.md. It drops in the workflow, skills, the spec template, `specs/`, and the
+   `.gitignore` entries.
+2. **Interview the user.** Ask, conversationally, and confirm a summary before building:
    - What is the project — purpose and scope?
    - Primary programming language?
    - Tech stack / frameworks / runtime?
    - Test framework (and the command to run it)?
    - Preferred file/directory organization?
    - License, and anything else worth pinning down.
-2. **Initialize the repo.** `git init` if it isn't a repo yet, on a clean main branch. Create
+3. **Initialize the repo.** `git init` if it isn't a repo yet, on a clean main branch. Create
    the directory layout from the interview.
-3. **Install the runspec bundle.** Run `install.sh` with the target as its argument:
-   `bash <path-to-runspec>/install.sh .` — this is the directory holding SETUP.md. It drops in
-   the workflow, skills, `SPEC_TEMPLATE.md`, `specs/`, and the `.gitignore` entries.
 4. **Stand up the test runner.** Install/configure the chosen framework and add **one trivial
    passing test**, then run it to confirm green. This makes "the tests pass" meaningful from the
    very first run — runspec's Integrate phase gates on it.
 5. **Write the docs.**
-   - `AGENTS.md` is the canonical agent doc: product vision/scope, stack, conventions, and the
-     **test command**.
+   - `AGENTS.md` is the canonical agent doc: product vision/scope, stack, conventions, the
+     **test command**, and **[the master rules](#the-opinionated-master-rules)** — new projects
+     always adopt them, so include them without asking.
    - Make `CLAUDE.md` a **symlink to `AGENTS.md`** (`ln -s AGENTS.md CLAUDE.md`) so Claude Code
      and other agents read one source of truth.
    - Write a `README` for humans.
-6. **Master rules.** Present [the opinionated master rules](#the-opinionated-master-rules) and
-   ask whether to adopt them. New projects have nothing to disrupt, so adopting is the sensible
-   default — but it is the user's call. If yes, fold them into `AGENTS.md`.
-7. **Commit** the scaffold as one clear commit.
-8. **Stop and report.** List what was set up and tell the user they can now run
+6. **Commit** the scaffold as one clear commit.
+7. **Stop and report.** List what was set up and tell the user they can now run
    `/runspec 'their first goal'`. Do not run it.
 
 ---
@@ -59,8 +58,8 @@ user only to confirm or correct.
 1. **Check preconditions.** Confirm it's a git repo, the working tree is clean, and you're on a
    branch (not detached HEAD). Stop and report if any of these fail.
 2. **Install the bundle.** Run `bash <path-to-runspec>/install.sh .` and read its report. If it
-   **skipped** `SPEC_TEMPLATE.md` or a same-named skill, surface that to the user: the planner
-   reads `SPEC_TEMPLATE.md`, so the repo must use runspec's or a compatible one. Only re-run with
+   **skipped** `.claude/SPEC_TEMPLATE.md` or a same-named skill, surface that to the user: the
+   planner reads `.claude/SPEC_TEMPLATE.md`, so the repo must use runspec's or a compatible one. Only re-run with
    `--force` to overwrite once the user agrees.
 3. **Establish a green baseline.** Discover the project's test command, **actually run it**, and
    confirm it passes. If the baseline is red, **stop and report** — runspec's Integrate phase
@@ -85,8 +84,9 @@ user only to confirm or correct.
 
 ## The opinionated master rules
 
-runspec carries a coding philosophy from its lineage. Offer these to the user during setup; the
-user decides whether to adopt them. If adopted, record them in `AGENTS.md`.
+runspec carries a coding philosophy from its lineage. **New projects adopt these by default**,
+recorded in `AGENTS.md`. **For an existing project, offer them and let the user decide** — and if
+adopted, merge them in without overwriting the repo's existing conventions.
 
 - **No backward compatibility, compatibility layers, or aliases** unless explicitly required —
   prefer a clean breaking change that keeps the implementation simpler.
@@ -95,4 +95,4 @@ user decides whether to adopt them. If adopted, record them in `AGENTS.md`.
 - **No silent fallbacks or ad hoc alternative paths** unless explicitly requested.
 - **Fail fast.** If safe continuation isn't possible, raise a clear error. Don't pass default
   fallback values to env/config lookups — require the variable and fail clearly if it's missing.
-- **Specs are the contract.** Plan with `SPEC_TEMPLATE.md`; build test-first (TDD).
+- **Specs are the contract.** Plan with `.claude/SPEC_TEMPLATE.md`; build test-first (TDD).

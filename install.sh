@@ -31,7 +31,7 @@ FILES=(
   ".claude/skills/spec-review/SKILL.md"
   ".claude/skills/docs-maintainer/SKILL.md"
   ".claude/skills/test-driver/SKILL.md"
-  "SPEC_TEMPLATE.md"
+  ".claude/SPEC_TEMPLATE.md"
 )
 
 installed=()

@@ -34,7 +34,7 @@ CARRY-OVER DIRECTION (standing guidance from the last review — honor it):
 ${direction || '(none — this is the first run)'}
 
 If the project has a CLAUDE.md or AGENTS.md, read it first for product context,
-contracts, and conventions. Specs follow SPEC_TEMPLATE.md. Spec review follows the
+contracts, and conventions. Specs follow .claude/SPEC_TEMPLATE.md. Spec review follows the
 spec-review skill. Builders follow the spec's Implementation Tasks in order — tests
 first — per the test-driver skill. Docs follow the docs-maintainer skill.
 `.trim()
@@ -183,7 +183,7 @@ You are the PLANNER. Decompose the run goal into concrete, non-overlapping work 
 how many — split into as many genuinely independent items as the goal naturally divides into so
 they can be built in parallel, but don't invent busywork or split work that's truly one unit. Each
 item becomes its own parallel build lane, so favor parallelism: two items must NOT edit the same file.
-For EACH item, write a spec file under specs/ following SPEC_TEMPLATE.md exactly (purpose,
+For EACH item, write a spec file under specs/ following .claude/SPEC_TEMPLATE.md exactly (purpose,
 acceptance criteria, target files, modules, data models, test cases) — keep its
 "## Implementation Tasks" and "## Completion Tasks" checklists verbatim; the builder works them.
 Specs are the contract everything downstream verifies against, so make acceptance criteria precise and testable.
