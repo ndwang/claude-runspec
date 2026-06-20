@@ -64,7 +64,7 @@ and adapt for existing ones. Both scenarios converge on the same runbook.
 # 1. mechanical: drop the bundle into the target repo (run from the repo, or pass its path)
 bash /path/to/claude-runspec/install.sh .
 
-# 2. judgment: open Claude Code in that repo and say:
+# 2. interactive: open Claude Code in that repo and say:
 #    "set up runspec by following SETUP.md"
 ```
 
@@ -92,16 +92,10 @@ loops it to green before merging, otherwise it reports `no-tests`.
 
 - **Where the report goes.** The Report phase (phase 7 in `runspec.mjs`) is the only delivery
   seam — everything above it is delivery-agnostic and hands off a clean `runRecord` object.
-  Swap that phase to POST the report to an HTTP endpoint, open a PR comment, or message Slack
-  instead of (or in addition to) writing to disk.
+  Swap that phase to open a PR comment, or message Slack instead of (or in addition to) writing to disk.
 - **Tests.** The Integrate phase requires the project's tests to pass before merging. The test
   command is inferred from the project; documenting it in `CLAUDE.md`/`AGENTS.md` makes that reliable.
 - **Caps.** `MAX_SPEC_REVIEW_ROUNDS` and `MAX_BUILD_ATTEMPTS` at the top of `runspec.mjs`.
 - **Model routing.** Planner/reviewers/docs run on `sonnet`; builders, integrator, and reporter
   inherit the session model. Adjust the `model:` options per `agent()` call.
 
-## Lineage
-
-The run loop and skills were extracted from the **Lab Meeting** project, where the report is
-posted to a live voice-driven "lab meeting" app instead of written to disk. This kit is the
-reusable core with that product-specific delivery cut behind the report seam.
