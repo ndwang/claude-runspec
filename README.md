@@ -74,8 +74,8 @@ branch; if there's an `npm test`/`npm run build` it loops them to green, otherwi
   seam — everything above it is delivery-agnostic and hands off a clean `runRecord` object.
   Swap that phase to POST the report to an HTTP endpoint, open a PR comment, or message Slack
   instead of (or in addition to) writing to disk.
-- **Build/test commands.** The Integrate phase runs your project's own test/build commands, inferred
-  from the project layout. Naming them in `CLAUDE.md`/`AGENTS.md` makes that reliable.
+- **Tests.** The Integrate phase requires the project's tests to pass before merging. The test
+  command is inferred from the project; documenting it in `CLAUDE.md`/`AGENTS.md` makes that reliable.
 - **Caps.** `MAX_SPEC_REVIEW_ROUNDS` and `MAX_BUILD_ATTEMPTS` at the top of `runspec.mjs`.
 - **Model routing.** Planner/reviewers/docs run on `sonnet`; builders, integrator, and reporter
   inherit the session model. Adjust the `model:` options per `agent()` call.
