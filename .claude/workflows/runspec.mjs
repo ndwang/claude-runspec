@@ -337,11 +337,10 @@ You are INTEGRATION. From the repo root on the main branch, merge ONLY these bra
 passed review: ${JSON.stringify(done.map((l) => l.branch))}.
 - Record the pre-merge HEAD, then merge each branch; resolve any conflicts (code AND docs).
 - Run a docs consistency pass so merged docs/ don't contradict each other.
-- Loop on THE PROJECT'S OWN checks until green, capped at 3 attempts. Discover what those are —
-  do not assume npm. Look at CLAUDE.md/AGENTS.md, package.json scripts, Makefile/justfile,
-  pyproject.toml/tox.ini/noxfile, Cargo.toml, go.mod, CI config (.github/workflows), or a
-  Verification section in the specs — and run the project's real test (and build/lint) commands,
-  fixing failures. If the project genuinely has no test suite, report 'no-tests'.
+- Loop on THE PROJECT'S OWN checks until green, capped at 3 attempts. Use the project's real test
+  (and build/lint) commands — how to run them is usually obvious from the project layout or
+  documented in CLAUDE.md/AGENTS.md or a spec's Verification section. If the project genuinely has
+  no test suite, report 'no-tests'.
 - Clean up the merged worktrees: \`git worktree remove <path>\` for each.
 - Return commitRange as <pre-merge-HEAD>..HEAD so the reporter can diff the run.
 
