@@ -1,8 +1,9 @@
 # runspec
 
-A drop-in **spec-driven, test-first agentic workflow** for Claude Code: one command (`/runspec`)
-takes a goal and runs a full build loop across parallel subagents, then writes a structured
-report a human reads to decide what happens next.
+A drop-in **spec-driven, test-first agentic workflow** for Claude Code: hand Claude a build goal
+and it runs a full loop across parallel subagents — planning, building, reviewing, integrating —
+then writes a structured report a human reads to decide what happens next. Claude reaches for it
+on its own; `/runspec` is the explicit trigger.
 
 ```
 plan ──▶ spec review ──▶ ║ build ─▶ skeptic review ─▶ docs ║ ──▶ integrate & test ──▶ report
@@ -40,7 +41,13 @@ report for a human to decide.
 
 ## Use it
 
-In a Claude Code session inside your repo:
+**The primary mode is automatic.** Claude discovers the workflow in `.claude/workflows/` and runs
+it on its own — hand it a substantial, parallelizable build task in plain language and it reaches
+for runspec, plans, fans out the lanes, integrates, and reports, without you invoking anything. It
+stays hands-on for the small stuff (a quick edit, a one-file fix); runspec is for the work big
+enough to decompose.
+
+Manual `/runspec` is the explicit form — for forcing a run or passing exact inputs:
 
 ```
 /runspec with goal 'Add rate limiting to the public API' and direction 'keep the 60rps default'
