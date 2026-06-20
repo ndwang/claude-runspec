@@ -62,7 +62,7 @@ and adapt for existing ones. Both scenarios converge on the same runbook.
 
 ```bash
 # 1. mechanical: drop the bundle into the target repo (run from the repo, or pass its path)
-bash /path/to/runspec/install.sh .
+bash /path/to/claude-runspec/install.sh .
 
 # 2. judgment: open Claude Code in that repo and say:
 #    "set up runspec by following SETUP.md"
